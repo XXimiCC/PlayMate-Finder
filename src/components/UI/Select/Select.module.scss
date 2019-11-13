@@ -1,0 +1,5 @@
+.ReactSelectWrapper {
+  :global .react-select__menu{
+    z-index: 100;
+  }
+}
