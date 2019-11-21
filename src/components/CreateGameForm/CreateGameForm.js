@@ -5,11 +5,15 @@ import {Field,Formik} from "formik";
 import * as yup from 'yup';
 import FieldSelect from "../UI/FieldSelect/FieldSelect";
 import FieldInput from "../UI/FieldInput/FieldInput";
+import {connect} from "react-redux";
+import {createGame} from "../../store/actions/game";
+import Loader from "../UI/Loader/Loader";
+import {Storage} from 'aws-amplify'
 // import css from './CreateGameForm.module.scss';
 
 class CreateGameForm extends Component {
   initialValues = {
-    name: '',
+    name: 'Виноделие',
     nameEng: '',
     genres: null,
     producer: null,
@@ -34,9 +38,9 @@ class CreateGameForm extends Component {
     genres: yup.array()
       .nullable()
       .required('Выбирите жанр'),
-    producer: yup.array()
+    producer: yup.object()
       .nullable(),
-    lang: yup.array()
+    lang: yup.object()
       .nullable()
       .required('Выбирите язык'),
     minAge: yup.string()
@@ -76,6 +80,13 @@ class CreateGameForm extends Component {
   }
 
   onSubmit = (values) => {
+    // game.complexity = _.get(game, 'complexity.value', null);
+    // game.lang = _.get(game, 'lang.value', null);
+    // game.minAge = _.get(game, 'minAge.value', null);
+    // game.playersMin = _.get(game, 'playersMin.value', null);
+    // game.playersMax = _.get(game, 'playersMax.value', null);
+
+    this.props.createGame(values);
     console.log(values);
   };
 
@@ -110,177 +121,205 @@ class CreateGameForm extends Component {
     //TODO добавить скрол к ошибке
 
     return (
-      <Formik
-        initialValues={this.initialValues}
-        validate={this.validation}
-        validationSchema={this.validationSchema}
-        onSubmit={this.onSubmit}
-        children={(props) => (
-        <form onSubmit={props.handleSubmit}>
-          <h2>Добавить новую игру</h2>
-          <div className="row">
-            <div className="form-group col-sm-5">
-              <label htmlFor="name">Название</label>
-              <FieldInput
-                className="form-control"
-                name="name"
-                id="name"
-                placeholder="Виноделие: Полное Издание"
-              />
-            </div>
-            {/*Название Англ*/}
-            <div className="form-group col-sm-5">
-              <label htmlFor="name-eng">Название (Англ)</label>
-              <FieldInput
-                className="form-control"
-                name="nameEng"
-                id="name-eng"
-                placeholder="Viticulture: Full Edition"
-              />
-            </div>
-            {/*Язык*/}
-            <div className="form-group col-sm-2">
-              <label>Язык</label>
-              <FieldSelect
-                name="lang"
-                styles={{
-                  dropdownIndicator: (provided) => ({
-                    ...provided,
-                    padding: 0,
-                  })
-                }}
-                options={languages}
-                placeholder="Язык"
-              />
-            </div>
-            {/*Жанр*/}
-            <div className="form-group col-sm-6">
-              <label>Жанр</label>
-              <FieldSelect
-                name="genres"
-                isClearable
-                isMulti
-                options={genres}
-                placeholder={'Выбирите жанр'}
-              />
-            </div>
-            {/*Производитель*/}
-            <div className="form-group col-sm-6">
-              <label>Производитель</label>
-              <FieldSelect
-                name="producer"
-                component={CreatableSelect}
-                isClearable
-                options={producers}
-                placeholder={'Выбирите или добавьте'}
-              />
-            </div>
-          </div>
-          <h4>Характеристики</h4>
-          <div className="row">
-            {/*Возраст*/}
-            <div className="form-group col-sm-3">
-              <label>Минимальный Возраст</label>
-              <FieldSelect
-                name="minAge"
-                options={ages}
-                placeholder={'Выбирите возраст'}
-              />
-            </div>
-            {/*Сложность осовения*/}
-            <div className="form-group col-sm-3">
-              <label htmlFor="name-eng">Сложность освоения</label>
-              <FieldSelect
-                name="complexity"
-                options={complexity}
-                placeholder={'Выбирите сложность'}
-              />
-            </div>
-            {/*Длительность партии*/}
-            <div className="form-group col-sm-3">
-              <label>Длительность партии (минут)</label>
+      <>
+        <Loader show={this.props.isLoading} type='local'/>
+        <Formik
+          initialValues={this.initialValues}
+          validate={this.validation}
+          validationSchema={this.validationSchema}
+          onSubmit={this.onSubmit}
+          children={(props) => (
+            <form onSubmit={props.handleSubmit}>
+              <h2>Добавить новую игру</h2>
               <div className="row">
-                <div className="col-sm-12">
+                <div className="form-group col-sm-5">
+                  <label htmlFor="name">Название</label>
+                  <FieldInput
+                    className="form-control"
+                    name="name"
+                    id="name"
+                    placeholder="Виноделие: Полное Издание"
+                  />
+                </div>
+                {/*Название Англ*/}
+                <div className="form-group col-sm-5">
+                  <label htmlFor="name-eng">Название (Англ)</label>
+                  <FieldInput
+                    className="form-control"
+                    name="nameEng"
+                    id="name-eng"
+                    placeholder="Viticulture: Full Edition"
+                  />
+                </div>
+                {/*Язык*/}
+                <div className="form-group col-sm-2">
+                  <label>Язык</label>
+                  <FieldSelect
+                    name="lang"
+                    styles={{
+                      dropdownIndicator: (provided) => ({
+                        ...provided,
+                        padding: 0,
+                      })
+                    }}
+                    options={languages}
+                    placeholder="Язык"
+                  />
+                </div>
+                {/*Жанр*/}
+                <div className="form-group col-sm-6">
+                  <label>Жанр</label>
+                  <FieldSelect
+                    name="genres"
+                    isClearable
+                    isMulti
+                    options={genres}
+                    placeholder={'Выбирите жанр'}
+                  />
+                </div>
+                {/*Производитель*/}
+                <div className="form-group col-sm-6">
+                  <label>Производитель</label>
+                  <FieldSelect
+                    name="producer"
+                    component={CreatableSelect}
+                    isClearable
+                    options={producers}
+                    placeholder={'Выбирите или добавьте'}
+                  />
+                </div>
+              </div>
+              <h4>Характеристики</h4>
+              <div className="row">
+                {/*Возраст*/}
+                <div className="form-group col-sm-3">
+                  <label>Минимальный Возраст</label>
+                  <FieldSelect
+                    name="minAge"
+                    options={ages}
+                    placeholder={'Выбирите возраст'}
+                  />
+                </div>
+                {/*Сложность осовения*/}
+                <div className="form-group col-sm-3">
+                  <label htmlFor="name-eng">Сложность освоения</label>
+                  <FieldSelect
+                    name="complexity"
+                    options={complexity}
+                    placeholder={'Выбирите сложность'}
+                  />
+                </div>
+                {/*Длительность партии*/}
+                <div className="form-group col-sm-3">
+                  <label>Длительность партии (минут)</label>
                   <div className="row">
-                    <div className="col-md-6">
-                      <FieldInput
-                        type="number"
-                        className="form-control"
-                        name="durationMin"
-                        placeholder="15"
-                        withoutError
-                      />
-                    </div>
-                    <div className="col-md-6">
-                      <FieldInput
-                        type="number"
-                        className="form-control"
-                        name="durationMax"
-                        placeholder="60"
-                        withoutError
-                      />
+                    <div className="col-sm-12">
+                      <div className="row">
+                        <div className="col-md-6">
+                          <FieldInput
+                            type="number"
+                            className="form-control"
+                            name="durationMin"
+                            placeholder="15"
+                            withoutError
+                          />
+                        </div>
+                        <div className="col-md-6">
+                          <FieldInput
+                            type="number"
+                            className="form-control"
+                            name="durationMax"
+                            placeholder="60"
+                            withoutError
+                          />
+                        </div>
+                      </div>
+                      {((props.errors.durationMin && props.touched.durationMin)
+                        || (props.errors.durationMax && props.touched.durationMax))
+                      && <small
+                        className="form-text text-danger">{props.errors.durationMin || props.errors.durationMax}</small>}
                     </div>
                   </div>
-                  {((props.errors.durationMin && props.touched.durationMin)
-                  || (props.errors.durationMax && props.touched.durationMax))
-                  && <small className="form-text text-danger">{props.errors.durationMin || props.errors.durationMax}</small>}
+                </div>
+                {/*Количество игроков*/}
+                <div className="form-group col-sm-3">
+                  <label>Количество игроков</label>
+                  <div className="row">
+                    <div className="col-sm-6">
+                      <FieldSelect
+                        name="playersMin"
+                        options={players}
+                        placeholder={'1'}
+                        withoutError
+                      />
+                    </div>
+                    <div className="col-sm-6">
+                      <FieldSelect
+                        name="playersMax"
+                        options={players}
+                        placeholder={'1'}
+                        withoutError
+                      />
+                    </div>
+                    <div className="col-sm-12">
+                      {((props.errors.playersMin && props.touched.playersMin)
+                        || (props.errors.playersMax && props.touched.playersMax))
+                      && <small
+                        className="form-text text-danger">{props.errors.playersMin || props.errors.playersMax}</small>}
+                    </div>
+                  </div>
                 </div>
               </div>
-            </div>
-            {/*Количество игроков*/}
-            <div className="form-group col-sm-3">
-              <label>Количество игроков</label>
+              <h4>Описание</h4>
               <div className="row">
-                <div className="col-sm-6">
-                  <FieldSelect
-                    name="playersMin"
-                    options={players}
-                    placeholder={'1'}
-                    withoutError
-                  />
-                </div>
-                <div className="col-sm-6">
-                  <FieldSelect
-                    name="playersMax"
-                    options={players}
-                    placeholder={'1'}
-                    withoutError
-                  />
-                </div>
-                <div className="col-sm-12">
-                  {((props.errors.playersMin && props.touched.playersMin)
-                    || (props.errors.playersMax && props.touched.playersMax))
-                  && <small className="form-text text-danger">{props.errors.playersMin || props.errors.playersMax}</small>}
+                <div className="col-sm-12 mb-3">
+                  <Field name="description">
+                    {({field, meta, form}) => (
+                      <>
+                        <MceEditor
+                          initialValue={field.value}
+                          init={{
+                            images_upload_url: true,
+                            images_upload_handler: () => console.log('12312')
+                          }}
+                          onChange={(e, editor) => {
+                            form.setFieldValue(field.name, editor.getContent())
+                          }}
+                          onBlur={() => {
+                            form.setFieldTouched(field.name, true)
+                          }}
+                        />
+                        {meta.error && meta.touched && <small className="form-text text-danger">{meta.error}</small>}
+                      </>
+                    )}
+                  </Field>
                 </div>
               </div>
-            </div>
-          </div>
-          <h4>Описание</h4>
-          <div className="row">
-            <div className="col-sm-12 mb-3">
-              <Field name="description">
-                {({field, meta, form}) => (
-                  <>
-                  <MceEditor
-                    initialValue={field.value}
-                    init={{
-                      images_upload_url: true,
-                      images_upload_handler: () => console.log('12312')
-                    }}
-                    onChange={(e, editor) => {form.setFieldValue(field.name, editor.getContent())}}
-                    onBlur={() => {form.setFieldTouched(field.name, true)}}
-                  />
-                  {meta.error && meta.touched && <small className="form-text text-danger">{meta.error}</small>}
-                  </>
-                )}
-              </Field>
-            </div>
-          </div>
-          <button type="submit" className="btn btn-primary">Отправить</button>
-        </form>
-      )}/>
+              <button type="submit" className="btn btn-primary">Отправить</button>
+            </form>
+          )}
+        />
+        <button onClick={() => {
+          Storage.put('test.txt', 'Hello')
+            .then (result => console.log(result))
+            .catch(err => console.log(err));
+        }}>Отправить на S3</button>
+      </>
     );
   }
 }
 
-export default CreateGameForm;
+function mapStateToProps(state) {
+    return {
+      game: state.game.game,
+      isLoading: state.game.isLoading
+    }
+}
+
+function mapDispatchToProps(dispatch) {
+    return {
+      createGame: (game) => dispatch(createGame(game))
+    }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(CreateGameForm);

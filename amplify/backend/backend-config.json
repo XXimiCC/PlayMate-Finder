@@ -1,0 +1,32 @@
+{
+    "function": {
+        "playmatefinder5af46ac7PostConfirmation": {
+            "service": "Lambda",
+            "providerPlugin": "awscloudformation",
+            "build": true
+        }
+    },
+    "auth": {
+        "playmatefinder5af46ac7": {
+            "service": "Cognito",
+            "providerPlugin": "awscloudformation",
+            "dependsOn": [
+                {
+                    "category": "function",
+                    "resourceName": "playmatefinder5af46ac7PostConfirmation",
+                    "triggerProvider": "Cognito",
+                    "attributes": [
+                        "Arn",
+                        "Name"
+                    ]
+                }
+            ]
+        }
+    },
+    "storage": {
+        "PlaymateFinder": {
+            "service": "S3",
+            "providerPlugin": "awscloudformation"
+        }
+    }
+}

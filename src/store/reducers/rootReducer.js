@@ -1,6 +1,8 @@
 import {combineReducers} from "redux";
-import createGameReducer from "./createGame";
+import gameReducer from "./game";
+import authReducer from "./auth";
 
 export default combineReducers({
-    createGame: createGameReducer
+    game: gameReducer,
+    auth: authReducer
 });

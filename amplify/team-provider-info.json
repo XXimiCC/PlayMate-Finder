@@ -1,0 +1,26 @@
+{
+    "dev": {
+        "awscloudformation": {
+            "AuthRoleName": "amplify-playmate-finder-dev-152237-authRole",
+            "UnauthRoleArn": "arn:aws:iam::357858839330:role/amplify-playmate-finder-dev-152237-unauthRole",
+            "AuthRoleArn": "arn:aws:iam::357858839330:role/amplify-playmate-finder-dev-152237-authRole",
+            "Region": "eu-central-1",
+            "DeploymentBucketName": "amplify-playmate-finder-dev-152237-deployment",
+            "UnauthRoleName": "amplify-playmate-finder-dev-152237-unauthRole",
+            "StackName": "amplify-playmate-finder-dev-152237",
+            "StackId": "arn:aws:cloudformation:eu-central-1:357858839330:stack/amplify-playmate-finder-dev-152237/7d9c2c90-0a06-11ea-a2c6-02961de43c48"
+        },
+        "categories": {
+            "function": {
+                "playmatefinder5af46ac7PostConfirmation": {
+                    "GROUP": "playmate-finder"
+                }
+            },
+            "auth": {
+                "playmatefinder5af46ac7": {
+                    "hostedUIProviderCreds": "[{\"ProviderName\":\"Facebook\",\"client_id\":\"277327603152489\",\"client_secret\":\"ea39f9b70f18e09ee3eb0b14be31afb7\"},{\"ProviderName\":\"Google\",\"client_id\":\"786736667985-83vsslgo1rk0fhsitfj2n5tjr52s6o5q.apps.googleusercontent.com\",\"client_secret\":\"FFNtFprGEfyTWLN1knWMLwq4\"}]"
+                }
+            }
+        }
+    }
+}
