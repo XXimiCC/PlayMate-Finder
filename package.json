@@ -30,7 +30,7 @@
     "react-select": "^3.0.8",
     "redux": "^4.0.4",
     "redux-thunk": "^2.3.0",
-    "tinymce": "^5.1.1",
+    "tinymce": "^5.1.4",
     "yup": "^0.27.0"
   },
   "scripts": {
